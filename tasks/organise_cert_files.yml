@@ -1,0 +1,41 @@
+---
+- name: Check that the cert paths exists
+  file:
+    state: directory
+    path: "{{ item }}"
+  with_items:
+    - "{{ rhd_server_cert_path }}"
+    - "{{ rhd_client_cert_path }}"
+
+
+- name: Copy server certs
+  command: cp "{{ rhd_temp_path }}/{{ item }}" "{{ rhd_server_cert_path }}/."
+  with_items:
+    - ca.pem
+    - server-cert.pem
+    - server-key.pem
+
+- name: Set file permissions for server certs
+  file:
+    path: "{{ rhd_server_cert_path }}/{{ item }}"
+    mode: 0400
+  with_items:
+    - ca.pem
+    - server-cert.pem
+    - server-key.pem
+
+- name: Copy client certs
+  command: cp "{{ dds_temp_path }}/{{ item }}" "{{ dds_client_cert_path }}/."
+  with_items:
+    - ca.pem
+    - cert.pem
+    - key.pem
+
+- name: Set file permissions for client certs
+  file:
+    path: "{{ dds_client_cert_path }}/{{ item }}"
+    mode: 0444
+  with_items:
+    - ca.pem
+    - cert.pem
+    - key.pem

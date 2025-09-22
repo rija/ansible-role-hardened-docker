@@ -1,0 +1,24 @@
+---
+- name: Create client key
+  command: "openssl genrsa -out {{ rhd_temp_path }}/key.pem 4096"
+
+- name: Create client CSR 
+  command: "openssl req -subj '/CN=client' -new -key {{ rhd_temp_path}}/key.pem -out {{ rhd_temp_path }}/client.csr"
+
+- name: Remove extfile
+  file:
+    state: absent
+    path: "{{ rhd_extfile }}"
+
+- name: Create extfile
+  file:
+    state: touch
+    path: "{{ rhd_extfile }}"
+
+- name: Add extendedKeyUsage to extfile
+  lineinfile:
+    dest: "{{ rhd_extfile }}"
+    line: "extendedKeyUsage = clientAuth"
+
+- name: Create the client certificate 
+  command: "openssl x509 -req -days {{ rhd_client_cert_lifetime_days }} -sha256 -in {{ rhd_temp_path }}/client.csr -CA {{ rhd_temp_path }}/ca.pem -CAkey {{ rhd_temp_path }}/ca-key.pem -CAcreateserial -out {{ rhd_temp_path }}/cert.pem -extfile {{ rhd_extfile }} -passin file:{{ rhd_passphrase_file }}"

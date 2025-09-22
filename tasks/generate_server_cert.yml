@@ -1,0 +1,31 @@
+---
+- name: Create server key
+  command: openssl genrsa -out {{ rhd_temp_path }}/server-key.pem 4096
+
+- name: Create the server CSR 
+  command: "openssl req -subj '/CN={{ rhd_host }}' -sha256 -new -key {{ rhd_temp_path }}/server-key.pem -out {{ rhd_temp_path }}/server.csr"
+
+- name: Remove extfile
+  file:
+    state: absent
+    path: "{{ rhd_extfile }}" 
+
+- name: Create extfile
+  file:
+    state: touch 
+    path: "{{ rhd_extfile }}" 
+
+- name: Add alt name to extfile
+  lineinfile:
+    dest: "{{ rhd_extfile }}" 
+    line: "subjectAltName = IP:{{ rhd_host }},IP:127.0.0.1"
+
+- name: Set the docker daemon's key extended usage attributes to only server authentication
+  lineinfile:
+    dest: "{{ rhd_extfile }}"
+    line: "extendedKeyUsage = serverAuth"
+
+- name: Create the server certificate 
+  command: "openssl x509 -req -days {{ rhd_server_cert_lifetime_days }} -sha256 -in {{ rhd_temp_path }}/server.csr -CA {{ rhd_temp_path }}/ca.pem -CAkey {{ rhd_temp_path }}/ca-key.pem -CAcreateserial -out {{ rhd_temp_path}}/server-cert.pem -extfile {{ rhd_temp_path}}/extfile.cnf -passin file:{{ rhd_passphrase_file }}"
+
+

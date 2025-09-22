@@ -1,0 +1,3 @@
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd --tlsverify --tlscacert={{ rhd_server_cert_path }}/ca.pem --tlscert={{ rhd_server_cert_path }}/server-cert.pem --tlskey={{ rhd_server_cert_path }}/server-key.pem -H unix:// -H tcp://0.0.0.0:2376

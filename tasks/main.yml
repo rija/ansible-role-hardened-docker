@@ -1,0 +1,33 @@
+---
+- name: Create a temp directory
+  file:
+    state: directory
+    path: "{{ rhd_temp_path }}"   
+
+- name: Remove passphrase file, if it exists
+  file:
+    state: absent
+    path: "{{ rhd_passphrase_file }}" 
+
+- name: Create passphrase file
+  file:
+    state: touch
+    path: "{{ rhd_passphrase_file }}" 
+
+- name: Add passphrase to the file
+  lineinfile:
+    dest: "{{ rhd_passphrase_file }}"
+    line: "{{ rhd_passphrase }}" 
+
+- import_tasks: generate_ca_cert.yml
+- import_tasks: generate_server_cert.yml
+- import_tasks: generate_client_cert.yml
+- import_tasks: organise_cert_files.yml
+- import_tasks: setup_daemon_authenticated_tcp_listener.yml
+  when: rhd_secured_tcp_listener | bool
+
+- name: Remove the temp directory
+  file:
+    state: absent
+    path: "{{ rhd_temp_path }}"
+  notify: "{{ role_name }}: Restart Docker"
