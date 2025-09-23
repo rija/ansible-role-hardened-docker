@@ -19,11 +19,11 @@
     dest: "{{ rhd_passphrase_file }}"
     line: "{{ rhd_passphrase }}" 
 
-- import_tasks: generate_ca_cert.yml
-- import_tasks: generate_server_cert.yml
-- import_tasks: generate_client_cert.yml
-- import_tasks: organise_cert_files.yml
-- import_tasks: setup_daemon_authenticated_tcp_listener.yml
+- include_tasks: generate_ca_cert.yml
+- include_tasks: generate_server_cert.yml
+- include_tasks: generate_client_cert.yml
+- include_tasks: organise_cert_files.yml
+- include_tasks: setup_daemon_authenticated_tcp_listener.yml
   when: rhd_secured_tcp_listener | bool
 
 - name: Remove the temp directory
