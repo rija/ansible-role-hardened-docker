@@ -30,4 +30,4 @@
   file:
     state: absent
     path: "{{ rhd_temp_path }}"
-  notify: "{{ role_name }}: Restart Docker"
+  notify: "Restart Docker"
