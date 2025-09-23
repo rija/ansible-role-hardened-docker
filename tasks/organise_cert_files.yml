@@ -25,7 +25,7 @@
     - server-key.pem
 
 - name: Copy client certs
-  command: cp "{{ dds_temp_path }}/{{ item }}" "{{ dds_client_cert_path }}/."
+  command: cp "{{ rhd_temp_path }}/{{ item }}" "{{ rhd_client_cert_path }}/."
   with_items:
     - ca.pem
     - cert.pem
@@ -33,7 +33,7 @@
 
 - name: Set file permissions for client certs
   file:
-    path: "{{ dds_client_cert_path }}/{{ item }}"
+    path: "{{ rhd_client_cert_path }}/{{ item }}"
     mode: 0444
   with_items:
     - ca.pem
