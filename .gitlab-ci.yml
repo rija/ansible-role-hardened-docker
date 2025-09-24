@@ -17,6 +17,7 @@ include:
 
 lint:
   stage: test
+  image: python:3
   before_script:
     - pip install yamllint
   script:
