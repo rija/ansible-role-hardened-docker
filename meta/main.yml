@@ -2,11 +2,12 @@
 dependencies: []
 
 galaxy_info:
-  role_name: hardened-docker
+  role_name: hardened_docker
   author: rija
   company: "Cinecinetique Ltd"
   description: hardened setup for docker on Linux
   license: MIT
+  issue_tracker_url: https://gitlab.com/rmenage/ansible-role-hardened-docker/-/issues
   min_ansible_version: 2.15.1
   platforms:
       - name: Fedora
