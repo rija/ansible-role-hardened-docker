@@ -15,10 +15,12 @@ secret_detection:
 include:
   - template: Security/Secret-Detection.gitlab-ci.yml
 
-lint:
+linting:
   stage: test
   image: python:3
   before_script:
     - pip install yamllint
+    - pip install ansible-lint
   script:
     - yamllint .
+    - ansible-lint .
