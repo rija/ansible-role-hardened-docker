@@ -10,7 +10,7 @@
     dest: /etc/systemd/system/docker.service.d/override.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Enable systemd socket for unix socket access
   command: systemctl enable docker.socket

@@ -18,7 +18,7 @@
 - name: Set file permissions for server certs
   file:
     path: "{{ rhd_server_cert_path }}/{{ item }}"
-    mode: 0400
+    mode: "0400"
   with_items:
     - ca.pem
     - server-cert.pem
@@ -34,7 +34,7 @@
 - name: Set file permissions for client certs
   file:
     path: "{{ rhd_client_cert_path }}/{{ item }}"
-    mode: 0444
+    mode: "0444"
   with_items:
     - ca.pem
     - cert.pem
