@@ -2,22 +2,22 @@
 - name: Create a temp directory
   file:
     state: directory
-    path: "{{ rhd_temp_path }}"   
+    path: "{{ rhd_temp_path }}"
 
 - name: Remove passphrase file, if it exists
   file:
     state: absent
-    path: "{{ rhd_passphrase_file }}" 
+    path: "{{ rhd_passphrase_file }}"
 
 - name: Create passphrase file
   file:
     state: touch
-    path: "{{ rhd_passphrase_file }}" 
+    path: "{{ rhd_passphrase_file }}"
 
 - name: Add passphrase to the file
   lineinfile:
     dest: "{{ rhd_passphrase_file }}"
-    line: "{{ rhd_passphrase }}" 
+    line: "{{ rhd_passphrase }}"
 
 - include_tasks: generate_ca_cert.yml
 - include_tasks: generate_server_cert.yml

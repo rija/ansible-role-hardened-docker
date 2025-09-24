@@ -10,27 +10,27 @@ galaxy_info:
   issue_tracker_url: https://gitlab.com/rmenage/ansible-role-hardened-docker/-/issues
   min_ansible_version: 2.15.1
   platforms:
-      - name: Fedora
-        versions:
-          - all
-      - name: Debian
-        versions:
-          - buster
-          - bullseye
-          - bookworm
-          - trixie
-      - name: Ubuntu
-        versions:
-          - bionic
-          - focal
-          - jammy
-          - noble
-      - name: Alpine
-        version:
-          - all
-      - name: ArchLinux
-        versions:
-          - all
+    - name: Fedora
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - buster
+        - bullseye
+        - bookworm
+        - trixie
+    - name: Ubuntu
+      versions:
+        - bionic
+        - focal
+        - jammy
+        - noble
+    - name: Alpine
+      version:
+        - all
+    - name: ArchLinux
+      versions:
+        - all
   galaxy_tags:
     - web
     - system

@@ -2,6 +2,5 @@
 - name: Generate CA keys
   command: "openssl genrsa -aes256 -passout file:{{ rhd_passphrase_file }} -out {{ rhd_temp_path }}/ca-key.pem 4096"
 
-- name: Generate ca certificate   
+- name: Generate ca certificate
   command: "openssl req -new -x509 -days 365 -key {{ rhd_temp_path }}/ca-key.pem -sha256 -out {{ rhd_temp_path }}/ca.pem -passin file:{{ rhd_passphrase_file }} -subj '/C={{ rhd_country }}/ST={{rhd_state }}>/L={{ rhd_locality }}/O={{ rhd_organization }}/CN={{ rhd_common_name }}'"
-
