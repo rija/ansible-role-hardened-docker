@@ -1,22 +1,25 @@
 ---
 - name: Check that the cert paths exists
-  file:
+  ansible.builtin.file:
     state: directory
     path: "{{ item }}"
+    mode: "u+rwx"
   with_items:
     - "{{ rhd_server_cert_path }}"
     - "{{ rhd_client_cert_path }}"
 
 
 - name: Copy server certs
-  command: cp "{{ rhd_temp_path }}/{{ item }}" "{{ rhd_server_cert_path }}/."
+  ansible.builtin.command: cp "{{ rhd_temp_path }}/{{ item }}" "{{ rhd_server_cert_path }}/."
   with_items:
     - ca.pem
     - server-cert.pem
     - server-key.pem
+  register: out
+  changed_when: out.rc != 0
 
 - name: Set file permissions for server certs
-  file:
+  ansible.builtin.file:
     path: "{{ rhd_server_cert_path }}/{{ item }}"
     mode: "0400"
   with_items:
@@ -25,14 +28,16 @@
     - server-key.pem
 
 - name: Copy client certs
-  command: cp "{{ rhd_temp_path }}/{{ item }}" "{{ rhd_client_cert_path }}/."
+  ansible.builtin.command: cp "{{ rhd_temp_path }}/{{ item }}" "{{ rhd_client_cert_path }}/."
   with_items:
     - ca.pem
     - cert.pem
     - key.pem
+  register: out
+  changed_when: out.rc != 0
 
 - name: Set file permissions for client certs
-  file:
+  ansible.builtin.file:
     path: "{{ rhd_client_cert_path }}/{{ item }}"
     mode: "0444"
   with_items:
