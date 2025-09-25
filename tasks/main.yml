@@ -1,6 +1,6 @@
 ---
 - name: Check that docker is installed
-  command: docker version
+  ansible.builtin.command: docker version
   register: docker_check_res
   changed_when: false
   failed_when: docker_check_res.rc != 0
