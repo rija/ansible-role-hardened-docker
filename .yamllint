@@ -25,3 +25,9 @@ rules:
   # quoted-strings:
   #   quote-type: double
   #   required: only-when-needed
+  truthy:
+    allowed-values:
+      - 'true'
+      - 'false'
+      - 'yes'
+      - 'no'
