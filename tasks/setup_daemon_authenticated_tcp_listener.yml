@@ -16,4 +16,5 @@
 - name: Enable systemd socket for unix socket access
   ansible.builtin.systemd_service:
     name: docker.socket
+    daemon-reload: true
     enabled: true

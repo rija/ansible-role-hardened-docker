@@ -1,4 +1,15 @@
 ---
+- name: Check that docker is installed
+  command: docker version
+  register: docker_check_res
+  changed_when: false
+  failed_when: docker_check_res.rc != 0
+
+- name: Check that docker has active systemd service
+  ansible.builtin.systemd_service:
+    state: started
+    name: docker
+
 - name: Create a temp directory
   ansible.builtin.file:
     state: directory
