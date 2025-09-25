@@ -5,32 +5,14 @@ galaxy_info:
   role_name: hardened_docker
   author: rija
   company: "Cinecinetique Ltd"
-  description: hardened setup for docker on Linux
+  description: hardened setup for Docker on Linux
   license: MIT
   issue_tracker_url: https://gitlab.com/rmenage/ansible-role-hardened-docker/-/issues
   min_ansible_version: 2.15.1
   platforms:
-    - name: Fedora
-      versions:
-        - all
-    - name: Debian
-      versions:
-        - buster
-        - bullseye
-        - bookworm
-        - trixie
     - name: Ubuntu
       versions:
-        - bionic
-        - focal
-        - jammy
         - noble
-    - name: Alpine
-      version:
-        - all
-    - name: ArchLinux
-      versions:
-        - all
   galaxy_tags:
     - web
     - system
@@ -41,3 +23,4 @@ galaxy_info:
     - server
     - security
     - certificates
+    - hardening
