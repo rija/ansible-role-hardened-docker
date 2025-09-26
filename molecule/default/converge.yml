@@ -16,10 +16,9 @@
       vars:
         docker_service_manage: true
         docker_daemon_options:
-          log-opts: 
+          log-opts:
             max-size: "50m"
             max-file: "3"
-
     - name: Apply role under test
       ansible.builtin.include_role:
         name: rija.hardened_docker
