@@ -5,6 +5,26 @@
   hosts: all
   gather_facts: true # Disable if your role does not rely on facts
   tasks:
+    - name: Update apt cache (on Debian).
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_os_family == 'Debian'
+    - name: install docker_daemon_options
+      ansible.builtin.import_role:
+        name: ansible-role-docker
+      vars:
+        docker_service_manage: true
+        docker_daemon_options:
+          log-opts: 
+            max-size: "50m"
+            max-file: "3"
+
     - name: Apply role under test
       ansible.builtin.include_role:
         name: rija.hardened_docker
+      vars:
+        rhd_server_cert_path: /etc/docker
+        rhd_client_cert_path: /vagrant/docker-client-certs
+        rhd_host: "127.0.0.1"
+        rhd_secured_tcp_listener: yes
