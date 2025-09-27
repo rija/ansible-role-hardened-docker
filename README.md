@@ -20,5 +20,3 @@ This role uses `molecule` for integration Testing
 ```
 molecule test
 ```
-```
-```
