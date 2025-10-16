@@ -30,5 +30,6 @@ molecule:
   image: python:3.13
   before_script:
     - pip install molecule
+    - pip install molecule-plugins[docker]
   script:
     - molecule test
