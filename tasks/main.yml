@@ -29,8 +29,3 @@
 - ansible.builtin.include_tasks: organise_cert_files.yml
 - ansible.builtin.include_tasks: setup_daemon_authenticated_tcp_listener.yml
   when: rhd_secured_tcp_listener | bool
-
-- name: Trigger docker restart
-  ansible.builtin.debug:
-    msg: ""
-  notify: "Restart Docker"
