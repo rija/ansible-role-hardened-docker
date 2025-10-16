@@ -46,7 +46,7 @@ linting:
 
 molecule:
   stage: test
-  image: python:3.13
+  image: docker:latest
   before_script:
     - pip install molecule
     - pip install molecule-plugins[docker]
