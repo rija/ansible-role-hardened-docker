@@ -48,9 +48,9 @@ molecule:
   stage: test
   image: docker:latest
   before_script:
-    - apk add --no-cache py-pip bash curl jq git
-    - pip install molecule
-    - pip install molecule-plugins[docker]
+    - apk add --no-cache pipx bash curl jq git
+    - pipx install molecule
+    - pipx install molecule-plugins[docker]
   script:
     - docker info
     - molecule test
