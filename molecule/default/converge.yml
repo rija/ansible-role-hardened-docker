@@ -12,7 +12,7 @@
       when: ansible_os_family == 'Debian'
     - name: install docker_daemon_options
       ansible.builtin.import_role:
-        name: ansible-role-docker
+        name: geerlingguy.docker
       vars:
         docker_service_manage: true
         docker_daemon_options:
