@@ -44,16 +44,16 @@ linting:
     - yamllint .
     - ansible-lint .
 
-molecule:
+integration:
   stage: test
   image: docker:latest
   before_script:
-    - apk add --no-cache py-pip bash curl jq git
+    - apk add --no-cache py-pip
     - python3 -m venv ./molenv
     - source ./molenv/bin/activate
     - pip install molecule
     - pip install molecule-plugins[docker]
-    - ansible-galaxy install --force -v -r requirements.yml
+    - ansible-galaxy install --force -r requirements.yml
   script:
     - docker info
     - molecule test
