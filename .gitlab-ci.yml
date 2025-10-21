@@ -9,6 +9,23 @@ stages:
   - test
   - secret-detection
 variables:
+  # When using dind service we need to instruct docker, to talk with the
+  # daemon started inside of the service. The daemon is available with
+  # a network connection instead of the default /var/run/docker.sock socket.
+  #
+  # The 'docker' hostname is the alias of the service container as described at
+  # https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#accessing-the-services
+  #
+  # Note that if you're using Kubernetes executor, the variable should be set to
+  # tcp://localhost:2375 because of how Kubernetes executor connects services
+  # to the job container
+  DOCKER_HOST: tcp://docker:2375/
+  # When using dind, it's wise to use the overlayfs driver for
+  # improved performance.
+  DOCKER_DRIVER: overlay2
+  # See https://github.com/docker-library/docker/pull/166
+  DOCKER_TLS_CERTDIR: ""
+  FF_NETWORK_PER_BUILD: "true"
   SECRET_DETECTION_ENABLED: 'true'
 secret_detection:
   stage: secret-detection
@@ -17,10 +34,26 @@ include:
 
 linting:
   stage: test
-  image: python:3
+  image: python:3.13
   before_script:
     - pip install yamllint
     - pip install ansible-lint
   script:
     - yamllint .
     - ansible-lint .
+
+integration:
+  stage: test
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - apk add --no-cache py-pip
+    - python3 -m venv ./molenv
+    - source ./molenv/bin/activate
+    - pip install molecule
+    - pip install molecule-plugins[docker]
+    - ansible-galaxy install --force -r requirements.yml
+  script:
+    - docker info
+    - molecule test

@@ -9,28 +9,19 @@
   register: out
   changed_when: out.rc != 0
 
-- name: Remove extfile
-  ansible.builtin.file:
-    state: absent
-    path: "{{ rhd_extfile }}"
-
-- name: Create extfile
-  ansible.builtin.file:
-    state: touch
-    path: "{{ rhd_extfile }}"
-    mode: "u+rwx"
-
 - name: Add alt name to extfile
   ansible.builtin.lineinfile:
-    dest: "{{ rhd_extfile }}"
+    dest: "{{ rhd_server_extfile }}"
     line: "subjectAltName = IP:{{ rhd_host }},IP:127.0.0.1"
+    create: yes
+    mode: "0755"
 
 - name: Set the docker daemon's key extended usage attributes to only server authentication
   ansible.builtin.lineinfile:
-    dest: "{{ rhd_extfile }}"
+    dest: "{{ rhd_server_extfile }}"
     line: "extendedKeyUsage = serverAuth"
 
 - name: Create the server certificate
-  ansible.builtin.command: "openssl x509 -req -days {{ rhd_server_cert_lifetime_days }} -sha256 -in {{ rhd_temp_path }}/server.csr -CA {{ rhd_temp_path }}/ca.pem -CAkey {{ rhd_temp_path }}/ca-key.pem -CAcreateserial -out {{ rhd_temp_path}}/server-cert.pem -extfile {{ rhd_temp_path}}/extfile.cnf -passin file:{{ rhd_passphrase_file }}"
+  ansible.builtin.command: "openssl x509 -req -days {{ rhd_server_cert_lifetime_days }} -sha256 -in {{ rhd_temp_path }}/server.csr -CA {{ rhd_temp_path }}/ca.pem -CAkey {{ rhd_temp_path }}/ca-key.pem -CAcreateserial -out {{ rhd_temp_path}}/server-cert.pem -extfile {{ rhd_server_extfile }} -passin file:{{ rhd_passphrase_file }}"
   register: out
   changed_when: out.rc != 0

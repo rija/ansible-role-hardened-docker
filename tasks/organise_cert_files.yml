@@ -26,6 +26,7 @@
     - ca.pem
     - server-cert.pem
     - server-key.pem
+  notify: "Restart Docker"
 
 - name: Copy client certs
   ansible.builtin.command: cp "{{ rhd_temp_path }}/{{ item }}" "{{ rhd_client_cert_path }}/."
@@ -39,8 +40,9 @@
 - name: Set file permissions for client certs
   ansible.builtin.file:
     path: "{{ rhd_client_cert_path }}/{{ item }}"
-    mode: "0444"
+    mode: "0400"
   with_items:
     - ca.pem
     - cert.pem
     - key.pem
+  notify: "Restart Docker"

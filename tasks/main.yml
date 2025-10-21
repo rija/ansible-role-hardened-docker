@@ -16,21 +16,12 @@
     path: "{{ rhd_temp_path }}"
     mode: "u+rwx"
 
-- name: Remove passphrase file, if it exists
-  ansible.builtin.file:
-    state: absent
-    path: "{{ rhd_passphrase_file }}"
-
-- name: Create passphrase file
-  ansible.builtin.file:
-    state: touch
-    path: "{{ rhd_passphrase_file }}"
-    mode: "u+rwx"
-
 - name: Add passphrase to the file
   ansible.builtin.lineinfile:
     dest: "{{ rhd_passphrase_file }}"
     line: "{{ rhd_passphrase }}"
+    create: yes
+    mode: "0755"
 
 - ansible.builtin.include_tasks: generate_ca_cert.yml
 - ansible.builtin.include_tasks: generate_server_cert.yml
@@ -38,9 +29,3 @@
 - ansible.builtin.include_tasks: organise_cert_files.yml
 - ansible.builtin.include_tasks: setup_daemon_authenticated_tcp_listener.yml
   when: rhd_secured_tcp_listener | bool
-
-- name: Remove the temp directory
-  ansible.builtin.file:
-    state: absent
-    path: "{{ rhd_temp_path }}"
-  notify: "Restart Docker"
