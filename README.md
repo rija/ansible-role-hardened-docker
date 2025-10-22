@@ -11,8 +11,25 @@ Over time, I will try to add other additional measures also documented in Docker
 
 ## Prerequisites
 
+### For using
+
 * Docker CE is already installed following the official instructions at: (https://docs.docker.com/engine/install/)
 * The target environment has systemd present and Docker service is enabled in systemd.
+* At the moment Ubuntu 24 is the only host on which the role has been tested against.
+
+### For developing
+
+Ensure the tool dependencies are installed with Homebrew
+
+```
+brew bundle
+```
+
+Then install the Ansible dependencies
+
+```
+ansible-galaxy install -r requirements.yml
+```
 
 ## Testing
 
