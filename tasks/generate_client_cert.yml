@@ -5,7 +5,7 @@
   changed_when: out.rc != 0
 
 - name: Create client CSR
-  ansible.builtin.command: "openssl req -subj '/CN=client' -new -key {{ rhd_temp_path}}/key.pem -out {{ rhd_temp_path }}/client.csr"
+  ansible.builtin.command: "openssl req -subj '/CN=client' -new -key {{ rhd_temp_path }}/key.pem -out {{ rhd_temp_path }}/client.csr"
   register: out
   changed_when: out.rc != 0
 

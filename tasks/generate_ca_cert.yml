@@ -5,6 +5,6 @@
   changed_when: out.rc != 0
 
 - name: Generate ca certificate
-  ansible.builtin.command: "openssl req -new -x509 -days 365 -key {{ rhd_temp_path }}/ca-key.pem -sha256 -out {{ rhd_temp_path }}/ca.pem -passin file:{{ rhd_passphrase_file }} -subj '/C={{ rhd_country }}/ST={{rhd_state }}>/L={{ rhd_locality }}/O={{ rhd_organization }}/CN={{ rhd_common_name }}'"
+  ansible.builtin.command: "openssl req -new -x509 -days 365 -key {{ rhd_temp_path }}/ca-key.pem -sha256 -out {{ rhd_temp_path }}/ca.pem -passin file:{{ rhd_passphrase_file }} -subj '/C={{ rhd_country }}/ST={{ rhd_state }}>/L={{ rhd_locality }}/O={{ rhd_organization }}/CN={{ rhd_common_name }}'"
   register: out
   changed_when: out.rc != 0
