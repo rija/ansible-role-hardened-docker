@@ -22,6 +22,6 @@
     line: "extendedKeyUsage = serverAuth"
 
 - name: Create the server certificate
-  ansible.builtin.command: "openssl x509 -req -days {{ rhd_server_cert_lifetime_days }} -sha256 -in {{ rhd_temp_path }}/server.csr -CA {{ rhd_temp_path }}/ca.pem -CAkey {{ rhd_temp_path }}/ca-key.pem -CAcreateserial -out {{ rhd_temp_path }}/server-cert.pem -extfile {{ rhd_server_extfile }} -passin file:{{ rhd_passphrase_file }}"
+  ansible.builtin.command: "openssl x509 -req -days {{ rhd_server_cert_lifetime_days }} -sha256 -in {{ rhd_temp_path }}/server.csr -CA {{ rhd_temp_path }}/ca.pem -CAkey {{ rhd_temp_path }}/ca-key.pem -CAcreateserial -out {{ rhd_temp_path }}/server-cert.pem -extfile {{ rhd_server_extfile }} -passin file:{{ rhd_passfile }}"
   register: out
   changed_when: out.rc != 0

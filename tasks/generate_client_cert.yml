@@ -17,6 +17,6 @@
     mode: "0755"
 
 - name: Create the client certificat-
-  ansible.builtin.command: "openssl x509 -req -days {{ rhd_client_cert_lifetime_days }} -sha256 -in {{ rhd_temp_path }}/client.csr -CA {{ rhd_temp_path }}/ca.pem -CAkey {{ rhd_temp_path }}/ca-key.pem -CAcreateserial -out {{ rhd_temp_path }}/cert.pem -extfile {{ rhd_extfile }} -passin file:{{ rhd_passphrase_file }}"
+  ansible.builtin.command: "openssl x509 -req -days {{ rhd_client_cert_lifetime_days }} -sha256 -in {{ rhd_temp_path }}/client.csr -CA {{ rhd_temp_path }}/ca.pem -CAkey {{ rhd_temp_path }}/ca-key.pem -CAcreateserial -out {{ rhd_temp_path }}/cert.pem -extfile {{ rhd_extfile }} -passin file:{{ rhd_passfile }}"
   register: out
   changed_when: out.rc != 0

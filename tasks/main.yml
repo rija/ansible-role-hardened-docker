@@ -18,7 +18,7 @@
 
 - name: Add passphrase to the file
   ansible.builtin.lineinfile:
-    dest: "{{ rhd_passphrase_file }}"
+    dest: "{{ rhd_passfile }}"
     line: "{{ rhd_passphrase }}"
     create: yes
     mode: "0755"

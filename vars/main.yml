@@ -1,6 +1,7 @@
 ---
 rhd_temp_path: "{{ rhd_system_tmp }}/ansible_rhd"
-rhd_passphrase_file: "{{ rhd_temp_path }}/passphrase.txt"
+rhd_passfile: "{{ rhd_temp_path }}/passphrase.txt"
 rhd_csr_form_file: "{{ rhd_temp_path }}/csr_form.txt"
 rhd_extfile: "{{ rhd_temp_path }}/extfile.cnf"
 rhd_server_extfile: "{{ rhd_temp_path }}/server_extfile.cnf"
+rhd_ca_cert: "{{ rhd_temp_path }}/ca.pem"

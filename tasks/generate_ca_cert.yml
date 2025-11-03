@@ -1,10 +1,15 @@
 ---
 - name: Generate CA keys
-  ansible.builtin.command: "openssl genrsa -aes256 -passout file:{{ rhd_passphrase_file }} -out {{ rhd_temp_path }}/ca-key.pem 4096"
+  ansible.builtin.command: "openssl genrsa -aes256 -passout file:{{ rhd_passfile }} -out {{ rhd_temp_path }}/ca-key.pem 4096"
   register: out
   changed_when: out.rc != 0
 
+- name: Get stats of the created CA private key
+  ansible.builtin.stat:
+    path: "{{ rhd_temp_path }}/ca-key.pem"
+  register: cakey
+
 - name: Generate ca certificate
-  ansible.builtin.command: "openssl req -new -x509 -days 365 -key {{ rhd_temp_path }}/ca-key.pem -sha256 -out {{ rhd_temp_path }}/ca.pem -passin file:{{ rhd_passphrase_file }} -subj '/C={{ rhd_country }}/ST={{ rhd_state }}>/L={{ rhd_locality }}/O={{ rhd_organization }}/CN={{ rhd_common_name }}'"
+  ansible.builtin.command: "openssl x509 -new -days {{ rhd_days }} -key {{ cakey.stat.path }} -sha256 -out {{ rhd_ca_cert }} -passin file:{{ rhd_passfile }} -subj {{ rhd_ca_cert_subj }}"
   register: out
   changed_when: out.rc != 0
