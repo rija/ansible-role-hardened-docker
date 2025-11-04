@@ -20,5 +20,5 @@ rhd_server_cert_path: /etc/docker
 rhd_client_cert_path: ~/.docker
 rhd_days: 365
 rhd_server_cert_lifetime_days: "{{ rhd_days }}"
-rhd_client_cert_lifetime_days: "{{ rhd_days }}"
+rhd_client_days: "{{ rhd_days }}"
 rhd_ca_cert_subj: "'/C={{ rhd_country }}/ST={{ rhd_state }}>/L={{ rhd_locality }}/O={{ rhd_organization }}/CN={{ rhd_common_name }}'"

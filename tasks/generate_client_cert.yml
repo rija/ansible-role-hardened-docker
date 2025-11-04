@@ -1,22 +1,60 @@
 ---
-- name: Create client key
-  ansible.builtin.command: "openssl genrsa -out {{ rhd_temp_path }}/key.pem 4096"
-  register: out
-  changed_when: out.rc != 0
+- name: Get stats of the created CA private key
+  ansible.builtin.stat:
+    path: "{{ rhd_temp_path }}/ca-key.pem"
+  register: cakey
 
-- name: Create client CSR
-  ansible.builtin.command: "openssl req -subj '/CN=client' -new -key {{ rhd_temp_path }}/key.pem -out {{ rhd_temp_path }}/client.csr"
-  register: out
-  changed_when: out.rc != 0
+- name: Get stats of the created CA cert
+  ansible.builtin.stat:
+    path: "{{ rhd_temp_path }}/ca.pem"
+  register: ca
 
-- name: Add extendedKeyUsage to extfile
-  ansible.builtin.lineinfile:
-    dest: "{{ rhd_extfile }}"
-    line: "extendedKeyUsage = clientAuth"
-    create: yes
-    mode: "0755"
+- name: Proceed with client cert creation if CA and its private key exist
+  when: cakey.stat.exists and ca.stat.exists
+  block:
+    - name: Create client key
+      ansible.builtin.command: "openssl genrsa -out {{ rhd_temp_path }}/key.pem 4096"
+      register: out
+      changed_when: out.rc != 0
 
-- name: Create the client certificat-
-  ansible.builtin.command: "openssl x509 -req -days {{ rhd_client_cert_lifetime_days }} -sha256 -in {{ rhd_temp_path }}/client.csr -CA {{ rhd_temp_path }}/ca.pem -CAkey {{ rhd_temp_path }}/ca-key.pem -CAcreateserial -out {{ rhd_temp_path }}/cert.pem -extfile {{ rhd_extfile }} -passin file:{{ rhd_passfile }}"
-  register: out
-  changed_when: out.rc != 0
+    - name: Create client CSR
+      ansible.builtin.command: "openssl req -subj '/CN=client' -new -key {{ rhd_temp_path }}/key.pem -out {{ rhd_temp_path }}/client.csr"
+      register: out
+      changed_when: out.rc != 0
+
+    - name: Get stats of the created CA CSR
+      ansible.builtin.stat:
+        path: "{{ rhd_temp_path }}/client.csr"
+      register: clcsr
+
+    - name: Add extendedKeyUsage to extfile
+      ansible.builtin.lineinfile:
+        dest: "{{ rhd_extfile }}"
+        line: "extendedKeyUsage = clientAuth"
+        create: yes
+        mode: "0755"
+
+    - name: Create the client certificate
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -req
+          - -days
+          - "{{ rhd_client_days }}"
+          - -sha256
+          - -CA
+          - "{{ ca.stat.path }}"
+          - -CAkey
+          - "{{ cakey.stat.path }}"
+          - -CAcreateserial
+          - -extfile
+          - "{{ rhd_extfile }}"
+          - -passin
+          - "file:{{ rhd_passfile }}"
+          - -in
+          - "{{ clcsr.stat.path }}"
+          - -out
+          - "{{ rhd_cl_cert }}"
+      register: out
+      changed_when: out.rc != 0
