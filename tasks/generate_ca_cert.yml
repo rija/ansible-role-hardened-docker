@@ -10,6 +10,21 @@
   register: cakey
 
 - name: Generate ca certificate
-  ansible.builtin.command: "openssl x509 -new -days {{ rhd_days }} -key {{ cakey.stat.path }} -sha256 -out {{ rhd_ca_cert }} -passin file:{{ rhd_passfile }} -subj {{ rhd_ca_cert_subj }}"
+  ansible.builtin.command:
+    argv:
+      - openssl
+      - x509
+      - -new
+      - -days
+      - "{{ rhd_days }}"
+      - -key
+      - "{{ cakey.stat.path }}"
+      - -sha256
+      - -out
+      - "{{ rhd_ca_cert }}"
+      - -passin
+      - "file:{{ rhd_passfile }}"
+      - -subj
+      - "{{ rhd_ca_cert_subj }}"
   register: out
   changed_when: out.rc != 0
