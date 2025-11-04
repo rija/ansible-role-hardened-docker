@@ -2,6 +2,7 @@
 
 ### Added
 
+- Fix: #3: Remove formatting warnings from Yaml Lint
 - Fix: #6: Remove formatting warnings from Ansible Lint
 - Feat #2: Add integration test using Ansible molecule
 - Feat #1: Check that docker and systemd are present
