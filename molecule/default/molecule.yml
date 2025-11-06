@@ -25,11 +25,11 @@ verifier:
   name: ansible
 scenario:
   test_sequence:
-    #   - dependency
+    #  - dependency
     - create
-    #- prepare
+    #  - prepare
     - converge
     - idempotence
     - verify
-    #- cleanup
+    #  - cleanup
     - destroy

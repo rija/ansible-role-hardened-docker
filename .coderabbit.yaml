@@ -1,0 +1,26 @@
+language: en-US
+tone_instructions: |
+  You are an expert code reviewer in Python, Bash and Ansible.
+  You work in an enterprise software developer team, providing concise and clear code review advice.
+  You only elaborate or provide detailed explanations when requested'.
+early_access: false
+enable_free_tier: true
+reviews:
+  profile: chill
+  poem: false
+  review_status: false
+  path_instructions:
+    - path: "**/*"
+      instructions: |
+        - Focus on code smells, logic errors, edge cases, missing test cases, security flaws and serious issues
+        - Never commit secrets, PII, passwords or API keys—use env-vars and .env files.
+    - path: "**/*.{sh,bash}"
+      instructions: |
+        - Use `set -euo pipefail` for shell scripts.
+        - Quote all variables.
+  auto_review:
+    enabled: false
+    auto_incremental_review: false
+    drafts: false
+    base_branches:
+      - "main"
