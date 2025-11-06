@@ -5,6 +5,24 @@
   hosts: instance
   gather_facts: false # Quicker, if you do not need facts
   tasks:
-    - name: Assert something
-      ansible.builtin.assert:
-        that: true
+    - name: Verify Docker binary is available
+      command: docker info
+      register: info
+      changed_when: false
+      failed_when: info.rc != 0
+
+    - name: Get ip address
+      command: ip addr
+      register: ips
+      changed_when: false
+      failed_when: ips.rc != 0
+
+    - name: Show ip addresses
+      debug:
+        msg: " {{ ips.stdout }}"
+
+    - name: Show Docker info details
+      debug:
+        msg: >
+          Docker info Output:
+          {{ info.stdout_lines | join('\n') }}
