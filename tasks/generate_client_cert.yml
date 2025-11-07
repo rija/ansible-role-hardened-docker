@@ -9,8 +9,13 @@
     path: "{{ rhd_temp_path }}/ca.pem"
   register: ca
 
+- name: Get stats of the created client cert
+  ansible.builtin.stat:
+    path: "{{ rhd_cl_cert }}"
+  register: clcert
+
 - name: Proceed with client cert creation if CA and its private key exist
-  when: cakey.stat.exists and ca.stat.exists
+  when: cakey.stat.exists and ca.stat.exists and not clcert.stat.exists
   block:
     - name: Create client key
       ansible.builtin.command: "openssl genrsa -out {{ rhd_temp_path }}/key.pem 4096"
@@ -57,4 +62,4 @@
           - -out
           - "{{ rhd_cl_cert }}"
       register: out
-      changed_when: out.rc != 0
+      changed_when: clcert.stat.exists

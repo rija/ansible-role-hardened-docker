@@ -9,8 +9,13 @@
     path: "{{ rhd_temp_path }}/ca.pem"
   register: ca
 
+- name: Get stats of the server cert (not running if already exists)
+  ansible.builtin.stat:
+    path: "{{ rhd_sv_cert }}"
+  register: svcert
+
 - name: Proceed with client cert creation if CA and its private key exist
-  when: cakey.stat.exists and ca.stat.exists
+  when: cakey.stat.exists and ca.stat.exists and not svcert.stat.exists
   block:
     - name: Create server key
       ansible.builtin.command: openssl genrsa -out {{ rhd_temp_path }}/server-key.pem 4096
@@ -63,4 +68,4 @@
           - -passin
           - "file:{{ rhd_passfile }}"
       register: out
-      changed_when: out.rc != 0
+      changed_when: svcert.stat.exists
