@@ -1,12 +1,12 @@
 ---
 - name: Get stats of the created CA private key
   ansible.builtin.stat:
-    path: "{{ rhd_temp_path }}/ca-key.pem"
+    path: "{{ rhd_ca_key }}"
   register: cakey
 
 - name: Get stats of the created CA cert
   ansible.builtin.stat:
-    path: "{{ rhd_temp_path }}/ca.pem"
+    path: "{{ rhd_ca_cert }}"
   register: ca
 
 - name: Get stats of the created client cert
@@ -14,23 +14,31 @@
     path: "{{ rhd_cl_cert }}"
   register: clcert
 
+- name: Get stats of the created client key
+  ansible.builtin.stat:
+    path: "{{ rhd_cl_key }}"
+  register: clkey
+
+- name: Get stats of the created client CSR
+  ansible.builtin.stat:
+    path: "{{ rhd_cl_csr }}"
+  register: clcsr
+
+
 - name: Proceed with client cert creation if CA and its private key exist
   when: cakey.stat.exists and ca.stat.exists and not clcert.stat.exists
   block:
     - name: Create client key
-      ansible.builtin.command: "openssl genrsa -out {{ rhd_temp_path }}/key.pem 4096"
-      register: out
-      changed_when: out.rc != 0
+      ansible.builtin.command: "openssl genrsa -out {{ rhd_cl_key }} 4096"
+      args:
+        creates: "{{ rhd_cl_key }}"
+      changed_when: clkey.stat.exists
 
     - name: Create client CSR
-      ansible.builtin.command: "openssl req -subj '/CN=client' -new -key {{ rhd_temp_path }}/key.pem -out {{ rhd_temp_path }}/client.csr"
-      register: out
-      changed_when: out.rc != 0
-
-    - name: Get stats of the created CA CSR
-      ansible.builtin.stat:
-        path: "{{ rhd_temp_path }}/client.csr"
-      register: clcsr
+      ansible.builtin.command: "openssl req -subj '/CN=client' -new -key {{ rhd_cl_key }} -out {{ rhd_cl_csr }}"
+      args:
+        creates: "{{ rhd_cl_csr }}"
+      changed_when: clcsr.stat.exists
 
     - name: Add extendedKeyUsage to extfile
       ansible.builtin.lineinfile:
@@ -49,17 +57,17 @@
           - "{{ rhd_client_days }}"
           - -sha256
           - -CA
-          - "{{ ca.stat.path }}"
+          - "{{ rhd_ca_cert }}"
           - -CAkey
-          - "{{ cakey.stat.path }}"
+          - "{{ rhd_ca_key }}"
           - -CAcreateserial
           - -extfile
           - "{{ rhd_extfile }}"
           - -passin
           - "file:{{ rhd_passfile }}"
           - -in
-          - "{{ clcsr.stat.path }}"
+          - "{{ rhd_cl_csr }}"
           - -out
           - "{{ rhd_cl_cert }}"
-      register: out
+        creates: "{{ rhd_cl_cert }}"
       changed_when: clcert.stat.exists

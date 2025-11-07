@@ -14,24 +14,32 @@
     path: "{{ rhd_sv_cert }}"
   register: svcert
 
+- name: Get stats of the created server key
+  ansible.builtin.stat:
+    path: "{{ rhd_sv_key }}"
+  register: svkey
+
+- name: Get stats of the created server CSR
+  ansible.builtin.stat:
+    path: "{{ rhd_sv_csr }}"
+  register: svcsr
+
+
 - name: Proceed with client cert creation if CA and its private key exist
   when: cakey.stat.exists and ca.stat.exists and not svcert.stat.exists
   block:
     - name: Create server key
       ansible.builtin.command: openssl genrsa -out {{ rhd_temp_path }}/server-key.pem 4096
-      register: out
-      changed_when: out.rc != 0
+      args:
+        creates: "{{ rhd_sv_key }}"
+      changed_when: svkey.stat.exists
 
     - name: Create the server CSR
-      ansible.builtin.command: "openssl req -subj '/CN={{ rhd_host }}' -sha256 -new -key {{ rhd_temp_path }}/server-key.pem -out {{ rhd_temp_path }}/server.csr"
+      ansible.builtin.command: "openssl req -new -subj '/CN={{ rhd_host }}' -sha256 -key {{ rhd_sv_key }} -out {{ rhd_sv_csr }}"
+      args:
+        creates: "{{ rhd_sv_csr }}"
       register: out
-      changed_when: out.rc != 0
-
-    - name: Get stats of the created CA CSR
-      ansible.builtin.stat:
-        path: "{{ rhd_temp_path }}/server.csr"
-      register: svcsr
-
+      changed_when: svcsr.stat.exists
 
     - name: Add alt name to extfile
       ansible.builtin.lineinfile:
@@ -55,11 +63,11 @@
           - "{{ rhd_server_days }}"
           - -sha256
           - -in
-          - "{{ svcsr.stat.path }}"
+          - "{{ rhd_sv_csr }}"
           - -CA
-          - "{{ ca.stat.path }}"
+          - "{{ rhd_ca_cert }}"
           - -CAkey
-          - "{{ cakey.stat.path }}"
+          - "{{ rhd_ca_key }}"
           - -CAcreateserial
           - -out
           - "{{ rhd_sv_cert }}"
@@ -67,5 +75,5 @@
           - "{{ rhd_server_extfile }}"
           - -passin
           - "file:{{ rhd_passfile }}"
-      register: out
+        creates: "{{ rhd_sv_cert }}"
       changed_when: svcert.stat.exists

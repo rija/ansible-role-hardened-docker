@@ -1,21 +1,21 @@
 ---
+- name: Get stats of the created CA private key
+  ansible.builtin.stat:
+    path: "{{ rhd_ca_key }}"
+  register: cakey
 - name: Get stats of the to be created CA cert
   ansible.builtin.stat:
     path: "{{ rhd_ca_cert }}"
   register: cacert
+
 - name: If the file doesn't already exist, generate the CA
-  when: not cacert.stat.exists
+  when: not cakey.stat.exists and not cacert.stat.exists
   block:
     - name: Generate CA keys
-      ansible.builtin.command: "openssl genrsa -aes256 -passout file:{{ rhd_passfile }} -out {{ rhd_temp_path }}/ca-key.pem 4096"
-      register: out
-      changed_when: out.rc != 0
-
-    - name: Get stats of the created CA private key
-      ansible.builtin.stat:
-        path: "{{ rhd_temp_path }}/ca-key.pem"
-      register: cakey
-
+      ansible.builtin.command: "openssl genrsa -aes256 -passout file:{{ rhd_passfile }} -out {{ rhd_ca_key }} 4096"
+      args:
+        creates: "{{ rhd_ca_key}}"
+      changed_when: cakey.stat.exists
 
     - name: Generate ca certificate
       ansible.builtin.command:
@@ -24,9 +24,9 @@
           - x509
           - -new
           - -days
-          - "{{ rhd_days }}"
+          - "{{ rhd_ca_days }}"
           - -key
-          - "{{ cakey.stat.path }}"
+          - "{{ rhd_ca_key }}"
           - -sha256
           - -out
           - "{{ rhd_ca_cert }}"
@@ -34,5 +34,5 @@
           - "file:{{ rhd_passfile }}"
           - -subj
           - "{{ rhd_ca_cert_subj }}"
-      register: out
+        creates: "{{ rhd_ca_cert }}"
       changed_when: cacert.stat.exists
