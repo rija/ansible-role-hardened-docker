@@ -25,7 +25,7 @@
   register: svcsr
 
 
-- name: Proceed with client cert creation if CA and its private key exist
+- name: Proceed with server cert creation if CA and its private key exist
   when: cakey.stat.exists and ca.stat.exists and not svcert.stat.exists
   block:
     - name: Create server key
