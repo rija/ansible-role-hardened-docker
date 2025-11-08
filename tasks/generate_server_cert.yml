@@ -32,14 +32,11 @@
       ansible.builtin.command: openssl genrsa -out {{ rhd_temp_path }}/server-key.pem 4096
       args:
         creates: "{{ rhd_sv_key }}"
-      changed_when: svkey.stat.exists
 
     - name: Create the server CSR
       ansible.builtin.command: "openssl req -new -subj '/CN={{ rhd_host }}' -sha256 -key {{ rhd_sv_key }} -out {{ rhd_sv_csr }}"
       args:
         creates: "{{ rhd_sv_csr }}"
-      register: out
-      changed_when: svcsr.stat.exists
 
     - name: Add alt name to extfile
       ansible.builtin.lineinfile:
@@ -76,4 +73,3 @@
           - -passin
           - "file:{{ rhd_passfile }}"
         creates: "{{ rhd_sv_cert }}"
-      changed_when: svcert.stat.exists

@@ -32,13 +32,11 @@
       ansible.builtin.command: "openssl genrsa -out {{ rhd_cl_key }} 4096"
       args:
         creates: "{{ rhd_cl_key }}"
-      changed_when: clkey.stat.exists
 
     - name: Create client CSR
       ansible.builtin.command: "openssl req -subj '/CN=client' -new -key {{ rhd_cl_key }} -out {{ rhd_cl_csr }}"
       args:
         creates: "{{ rhd_cl_csr }}"
-      changed_when: clcsr.stat.exists
 
     - name: Add extendedKeyUsage to extfile
       ansible.builtin.lineinfile:
@@ -70,4 +68,3 @@
           - -out
           - "{{ rhd_cl_cert }}"
         creates: "{{ rhd_cl_cert }}"
-      changed_when: clcert.stat.exists

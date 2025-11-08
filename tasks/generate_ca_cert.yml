@@ -15,7 +15,6 @@
       ansible.builtin.command: "openssl genrsa -aes256 -passout file:{{ rhd_passfile }} -out {{ rhd_ca_key }} 4096"
       args:
         creates: "{{ rhd_ca_key}}"
-      changed_when: cakey.stat.exists
 
     - name: Generate ca certificate
       ansible.builtin.command:
@@ -35,4 +34,3 @@
           - -subj
           - "{{ rhd_ca_cert_subj }}"
         creates: "{{ rhd_ca_cert }}"
-      changed_when: cacert.stat.exists
