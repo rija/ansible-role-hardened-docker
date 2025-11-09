@@ -1,10 +1,36 @@
 ---
-- name: Generate CA keys
-  ansible.builtin.command: "openssl genrsa -aes256 -passout file:{{ rhd_passphrase_file }} -out {{ rhd_temp_path }}/ca-key.pem 4096"
-  register: out
-  changed_when: out.rc != 0
+- name: Get stats of the created CA private key
+  ansible.builtin.stat:
+    path: "{{ rhd_ca_key }}"
+  register: cakey
+- name: Get stats of the to be created CA cert
+  ansible.builtin.stat:
+    path: "{{ rhd_ca_cert }}"
+  register: cacert
 
-- name: Generate ca certificate
-  ansible.builtin.command: "openssl req -new -x509 -days 365 -key {{ rhd_temp_path }}/ca-key.pem -sha256 -out {{ rhd_temp_path }}/ca.pem -passin file:{{ rhd_passphrase_file }} -subj '/C={{ rhd_country }}/ST={{rhd_state }}>/L={{ rhd_locality }}/O={{ rhd_organization }}/CN={{ rhd_common_name }}'"
-  register: out
-  changed_when: out.rc != 0
+- name: If the file doesn't already exist, generate the CA
+  when: not cakey.stat.exists and not cacert.stat.exists
+  block:
+    - name: Generate CA keys
+      ansible.builtin.command: "openssl genrsa -aes256 -passout file:{{ rhd_passfile }} -out {{ rhd_ca_key }} 4096"
+      args:
+        creates: "{{ rhd_ca_key}}"
+
+    - name: Generate ca certificate
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -new
+          - -days
+          - "{{ rhd_ca_days }}"
+          - -key
+          - "{{ rhd_ca_key }}"
+          - -sha256
+          - -out
+          - "{{ rhd_ca_cert }}"
+          - -passin
+          - "file:{{ rhd_passfile }}"
+          - -subj
+          - "{{ rhd_ca_cert_subj }}"
+        creates: "{{ rhd_ca_cert }}"

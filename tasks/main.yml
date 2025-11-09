@@ -18,7 +18,7 @@
 
 - name: Add passphrase to the file
   ansible.builtin.lineinfile:
-    dest: "{{ rhd_passphrase_file }}"
+    dest: "{{ rhd_passfile }}"
     line: "{{ rhd_passphrase }}"
     create: yes
     mode: "0755"
@@ -29,3 +29,4 @@
 - ansible.builtin.include_tasks: organise_cert_files.yml
 - ansible.builtin.include_tasks: setup_daemon_authenticated_tcp_listener.yml
   when: rhd_secured_tcp_listener | bool
+- ansible.builtin.include_tasks: output.yml

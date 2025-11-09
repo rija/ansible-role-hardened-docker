@@ -1,22 +1,70 @@
 ---
-- name: Create client key
-  ansible.builtin.command: "openssl genrsa -out {{ rhd_temp_path }}/key.pem 4096"
-  register: out
-  changed_when: out.rc != 0
+- name: Get stats of the created CA private key
+  ansible.builtin.stat:
+    path: "{{ rhd_ca_key }}"
+  register: cakey
 
-- name: Create client CSR
-  ansible.builtin.command: "openssl req -subj '/CN=client' -new -key {{ rhd_temp_path}}/key.pem -out {{ rhd_temp_path }}/client.csr"
-  register: out
-  changed_when: out.rc != 0
+- name: Get stats of the created CA cert
+  ansible.builtin.stat:
+    path: "{{ rhd_ca_cert }}"
+  register: ca
 
-- name: Add extendedKeyUsage to extfile
-  ansible.builtin.lineinfile:
-    dest: "{{ rhd_extfile }}"
-    line: "extendedKeyUsage = clientAuth"
-    create: yes
-    mode: "0755"
+- name: Get stats of the created client cert
+  ansible.builtin.stat:
+    path: "{{ rhd_cl_cert }}"
+  register: clcert
 
-- name: Create the client certificat-
-  ansible.builtin.command: "openssl x509 -req -days {{ rhd_client_cert_lifetime_days }} -sha256 -in {{ rhd_temp_path }}/client.csr -CA {{ rhd_temp_path }}/ca.pem -CAkey {{ rhd_temp_path }}/ca-key.pem -CAcreateserial -out {{ rhd_temp_path }}/cert.pem -extfile {{ rhd_extfile }} -passin file:{{ rhd_passphrase_file }}"
-  register: out
-  changed_when: out.rc != 0
+- name: Get stats of the created client key
+  ansible.builtin.stat:
+    path: "{{ rhd_cl_key }}"
+  register: clkey
+
+- name: Get stats of the created client CSR
+  ansible.builtin.stat:
+    path: "{{ rhd_cl_csr }}"
+  register: clcsr
+
+
+- name: Proceed with client cert creation if CA and its private key exist
+  when: cakey.stat.exists and ca.stat.exists and not clcert.stat.exists
+  block:
+    - name: Create client key
+      ansible.builtin.command: "openssl genrsa -out {{ rhd_cl_key }} 4096"
+      args:
+        creates: "{{ rhd_cl_key }}"
+
+    - name: Create client CSR
+      ansible.builtin.command: "openssl req -subj '/CN=client' -new -key {{ rhd_cl_key }} -out {{ rhd_cl_csr }}"
+      args:
+        creates: "{{ rhd_cl_csr }}"
+
+    - name: Add extendedKeyUsage to extfile
+      ansible.builtin.lineinfile:
+        dest: "{{ rhd_extfile }}"
+        line: "extendedKeyUsage = clientAuth"
+        create: yes
+        mode: "0755"
+
+    - name: Create the client certificate
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -req
+          - -days
+          - "{{ rhd_client_days }}"
+          - -sha256
+          - -CA
+          - "{{ rhd_ca_cert }}"
+          - -CAkey
+          - "{{ rhd_ca_key }}"
+          - -CAcreateserial
+          - -extfile
+          - "{{ rhd_extfile }}"
+          - -passin
+          - "file:{{ rhd_passfile }}"
+          - -in
+          - "{{ rhd_cl_csr }}"
+          - -out
+          - "{{ rhd_cl_cert }}"
+        creates: "{{ rhd_cl_cert }}"

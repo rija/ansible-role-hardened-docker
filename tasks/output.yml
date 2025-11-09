@@ -1,0 +1,18 @@
+---
+- name: Collect output the dates for client cert
+  ansible.builtin.command: "openssl x509 -noout -dates -in {{ rhd_cl_cert }}"
+  register: clcert
+  changed_when: false
+
+- name: Show output of dates for client cert
+  ansible.builtin.debug:
+    msg: "{{ clcert.stdout }}"
+
+- name: Collect output the dates for serve cert
+  ansible.builtin.command: "openssl x509 -noout -dates -in {{ rhd_sv_cert }}"
+  register: svcert
+  changed_when: false
+
+- name: Show output of dates for serve cert
+  ansible.builtin.debug:
+    msg: "{{ svcert.stdout }}"
