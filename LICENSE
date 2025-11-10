@@ -1,7 +1,8 @@
 The MIT License (MIT)
 
 Copyright (c) 2025 Rija Ménagé
-Copyright (c) 2024 Chris Houseknecht for portions copied from ansible/role-secure-docker-daemon
+Copyright (c) 2024 Chris Houseknecht for snippets copied from ansible/role-secure-docker-daemon
+Copyright (c) 2017 Jeff Geerling for snippets copied from geerlingguy/ansible-role-docker
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
