@@ -1,16 +1,9 @@
 ---
-# Purpose: bring the instance to the desired state by running the role under test.
-# Molecule calls this playbook with `molecule converge`.
-- name: Converge
+- name: Example Usage
   hosts: all
   gather_facts: true # Disable if your role does not rely on facts
   tasks:
-    - name: Update apt cache (on Debian).
-      ansible.builtin.apt:
-        update_cache: true
-        cache_valid_time: 3600
-      when: ansible_os_family == 'Debian'
-    - name: install docker_daemon_options
+    - name: Install docker
       ansible.builtin.import_role:
         name: geerlingguy.docker
       vars:
@@ -19,9 +12,9 @@
           log-opts:
             max-size: "50m"
             max-file: "3"
-    - name: Apply role under test
+    - name: Secure Docker with client TLS
       ansible.builtin.include_role:
-        name: rija.hardened_docker
+        name: rmenage.hardened_docker
       vars:
         rhd_server_cert_path: /etc/docker
         rhd_client_cert_path: /vagrant/docker-client-certs
