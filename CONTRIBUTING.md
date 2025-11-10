@@ -30,6 +30,27 @@ If the change is a code change, make sure you are testing thoroughly:
 * You should write automated tests for your code changes
 * Make sure the existing automated tests still pass.
 
+## Getting started
+
+Ensure the tool dependencies are installed with Homebrew
+
+```
+brew bundle
+```
+
+Then install the Ansible dependencies
+
+```
+ansible-galaxy install -r requirements.yml
+```
+
+## Testing
+
+This role uses `molecule` for integration Testing
+```
+molecule test
+```
+
 
 [1] https://gitlab.com/rmenage/ansible-role-hardened-docker/-/issues
 
