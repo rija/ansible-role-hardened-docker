@@ -14,7 +14,7 @@
     - name: Generate CA keys
       ansible.builtin.command: "openssl genrsa -aes256 -passout file:{{ rhd_passfile }} -out {{ rhd_ca_key }} 4096"
       args:
-        creates: "{{ rhd_ca_key}}"
+        creates: "{{ rhd_ca_key }}"
 
     - name: Generate ca certificate
       ansible.builtin.command:

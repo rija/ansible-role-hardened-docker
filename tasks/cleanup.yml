@@ -1,0 +1,21 @@
+---
+- name: Delete intermediary files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ rhd_cl_csr }}"
+    - "{{ rhd_sv_csr }}"
+    - "{{ rhd_extfile }}"
+    - "{{ rhd_server_extfile }}"
+
+- name: Get stats of the passphrase file
+  ansible.builtin.stat:
+    path: "{{ rhd_passfile }}"
+  register: passfile
+
+# - name: Delete passphrase file
+#   ansible.builtin.file:
+#     path: "{{ rhd_passfile }}"
+#     state: absent
+#   when: passfile.stat.exists

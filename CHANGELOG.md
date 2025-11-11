@@ -2,6 +2,7 @@
 
 ### Added
 
+- Feat: #8: The role will delete redundant intermediary files
 - Feat: #4: Add user documentation
 - Fix: #3: Remove formatting warnings from Yaml Lint
 - Fix: #6: Remove formatting warnings from Ansible Lint
