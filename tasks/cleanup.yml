@@ -14,8 +14,9 @@
     path: "{{ rhd_passfile }}"
   register: passfile
 
-# - name: Delete passphrase file
-#   ansible.builtin.file:
-#     path: "{{ rhd_passfile }}"
-#     state: absent
-#   when: passfile.stat.exists
+- name: Delete passphrase file
+  ansible.builtin.file:
+    path: "{{ rhd_passfile }}"
+    state: absent
+  when: passfile.stat.exists
+  changed_when: false

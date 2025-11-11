@@ -10,3 +10,5 @@
     dest: "{{ rhd_passfile }}"
     content: "{{ rhd_passphrase }}"
     mode: "u+rw"
+    force: false
+  changed_when: false
