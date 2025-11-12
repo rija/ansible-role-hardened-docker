@@ -3,9 +3,9 @@ dependencies: []
 
 galaxy_info:
   role_name: hardened_docker
-  author: rija
+  author: rmenage
   company: "Cinecinetique Ltd"
-  description: hardened setup for Docker on Linux
+  description: hardened setup for Docker on Linux, client TLS for TCP port access to the daemon
   license: MIT
   issue_tracker_url: https://gitlab.com/rmenage/ansible-role-hardened-docker/-/issues
   min_ansible_version: 2.15.1

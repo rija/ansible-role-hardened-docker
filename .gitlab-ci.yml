@@ -51,8 +51,7 @@ integration:
     - apk add --no-cache py-pip
     - python3 -m venv ./molenv
     - source ./molenv/bin/activate
-    - pip install molecule
-    - pip install molecule-plugins[docker]
+    - pip install -r requirements.txt
     - ansible-galaxy install --force -r requirements.yml
   script:
     - docker info

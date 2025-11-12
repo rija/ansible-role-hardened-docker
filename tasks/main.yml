@@ -10,19 +10,7 @@
     state: started
     name: docker
 
-- name: Create a temp directory
-  ansible.builtin.file:
-    state: directory
-    path: "{{ rhd_temp_path }}"
-    mode: "u+rwx"
-
-- name: Add passphrase to the file
-  ansible.builtin.lineinfile:
-    dest: "{{ rhd_passfile }}"
-    line: "{{ rhd_passphrase }}"
-    create: yes
-    mode: "0755"
-
+- ansible.builtin.include_tasks: prepare.yml
 - ansible.builtin.include_tasks: generate_ca_cert.yml
 - ansible.builtin.include_tasks: generate_server_cert.yml
 - ansible.builtin.include_tasks: generate_client_cert.yml
@@ -30,3 +18,4 @@
 - ansible.builtin.include_tasks: setup_daemon_authenticated_tcp_listener.yml
   when: rhd_secured_tcp_listener | bool
 - ansible.builtin.include_tasks: output.yml
+- ansible.builtin.include_tasks: cleanup.yml

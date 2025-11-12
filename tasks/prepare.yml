@@ -1,0 +1,14 @@
+---
+- name: Create a temp directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ rhd_temp_path }}"
+    mode: "u+rwx"
+
+- name: Create file with passphrase
+  ansible.builtin.copy:
+    dest: "{{ rhd_passfile }}"
+    content: "{{ rhd_passphrase }}"
+    mode: "u+rw"
+    force: false
+  changed_when: false
