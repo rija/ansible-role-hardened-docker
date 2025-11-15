@@ -5,11 +5,120 @@
   hosts: instance
   gather_facts: false # Quicker, if you do not need facts
   tasks:
-    - name: Verify Docker binary is available
-      command: docker info
+    - name: Get stats of the cert private key
+      ansible.builtin.stat:
+        path: "/tmp/ansible_rhd/key.pem"
+      register: certkey
+    - name: Assert cert key exists
+      ansible.builtin.assert:
+        that: certkey.stat.exists
+    - name: Get stats of the CA key
+      ansible.builtin.stat:
+        path: "/tmp/ansible_rhd/ca-key.pem"
+      register: cakey
+    - name: Assert CA keys exists
+      ansible.builtin.assert:
+        that: cakey.stat.exists
+    - name: Get stats of the CA cert
+      ansible.builtin.stat:
+        path: "/tmp/ansible_rhd/ca.pem"
+      register: cacert
+    - name: Assert CA cert exists
+      ansible.builtin.assert:
+        that: cacert.stat.exists
+    - name: Get stats of the cert
+      ansible.builtin.stat:
+        path: "/tmp/ansible_rhd/cert.pem"
+      register: cert
+    - name: Assert cert exists
+      ansible.builtin.assert:
+        that: cert.stat.exists
+    - name: Get stats of the client key
+      ansible.builtin.stat:
+        path: "/tmp/ansible_rhd/key.pem"
+      register: clkey
+    - name: Assert client key exists
+      ansible.builtin.assert:
+        that: clkey.stat.exists
+    - name: Get stats of the server key
+      ansible.builtin.stat:
+        path: "/tmp/ansible_rhd/server-key.pem"
+      register: svkey
+    - name: Assert server key exists
+      ansible.builtin.assert:
+        that: svkey.stat.exists
+    - name: Get stats of the server cert
+      ansible.builtin.stat:
+        path: "/tmp/ansible_rhd/server-cert.pem"
+      register: svcert
+    - name: Assert server cert exists
+      ansible.builtin.assert:
+        that: svcert.stat.exists
+    - name: get dates for CA cert
+      ansible.builtin.command: "openssl x509 -noout -dates -in {{ cacert.stat.path }}"
+      register: out
+    - name: get dates for cert
+      ansible.builtin.command: "openssl x509 -noout -dates -in {{ cert.stat.path }}"
+      register: out
+    - name: Assert cert date returns
+      ansible.builtin.assert:
+        that: out.stdout | regex_search('notBefore') == 'notBefore'
+    - name: Get subjet of server cert
+      ansible.builtin.command: "openssl x509 -noout -subject -in {{ svcert.stat.path }}"
+      register: svcertout
+    - name: show subject for server cert
+      ansible.builtin.debug:
+        msg: "{{ svcertout.stdout }}"
+    - name: Assert server cert subject
+      ansible.builtin.assert:
+        that: svcertout.stdout | regex_search('0.0.0.0') == '0.0.0.0'
+    - name: Get pubkey checksum from server key
+      ansible.builtin.shell: "openssl pkey -in {{ svkey.stat.path }}  -pubout -outform pem | sha256sum"
+      register: svkeysum
+    - name: Get pubkey checksum from server cert
+      ansible.builtin.shell: "openssl x509 -in {{ svcert.stat.path }} -noout -pubkey | sha256sum"
+      register: svcertsum
+    - name: Assert server public key matches public key of server cert
+      ansible.builtin.assert:
+        that: svkeysum.stdout == svcertsum.stdout
+    - name: Get pubkey checksum from client key
+      ansible.builtin.shell: "openssl pkey -in {{ clkey.stat.path }}  -pubout -outform pem | sha256sum"
+      register: clkeysum
+    - name: Get pubkey checksum from client cert
+      ansible.builtin.shell: "openssl x509 -in {{ cert.stat.path }} -noout -pubkey | sha256sum"
+      register: clcertsum
+    - name: Assert client public key matches public key of client cert
+      ansible.builtin.assert:
+        that: clkeysum.stdout == clcertsum.stdout
+    - name: Get issuer for CA cert
+      ansible.builtin.command: "openssl x509 -noout -issuer -in {{ cacert.stat.path }}"
+      register: cacertout
+    - name: Output issuer for CA cert
+      ansible.builtin.debug:
+        msg: "{{ cacertout.stdout }}"
+
+    - name: Verify Docker binary is available and listening on TCP with TLS
+      command:
+        argv:
+          - docker
+          - --tlsverify
+          - --tlscacert
+          - "{{ cacert.stat.path }}"
+          - --tlskey
+          - "{{ clkey.stat.path }}"
+          - --tlscert
+          - "{{ cert.stat.path }}"
+          - -H
+          - tcp://127.0.0.1:2376
+          - info
       register: info
       changed_when: false
       failed_when: info.rc != 0
+    - name: Show Docker info details
+      debug:
+        msg: >
+          Docker info Output:
+          {{ info.stdout_lines | join('\n') }}
 
     - name: Get ip address
       command: ip addr
@@ -20,9 +129,3 @@
     - name: Show ip addresses
       debug:
         msg: " {{ ips.stdout }}"
-
-    - name: Show Docker info details
-      debug:
-        msg: >
-          Docker info Output:
-          {{ info.stdout_lines | join('\n') }}
