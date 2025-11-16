@@ -2,6 +2,7 @@
 
 ### Added
 
+- Fix: #9: Test the TLS based TCP connection to Docker
 - Feat: #8: The role will delete redundant intermediary files
 - Feat: #4: Add user documentation
 - Fix: #3: Remove formatting warnings from Yaml Lint
