@@ -3,6 +3,9 @@
   hosts: all
   gather_facts: true # Disable if your role does not rely on facts
   tasks:
+    - name: Update apt cache.
+      apt: update_cache=yes cache_valid_time=600
+      when: ansible_facts.os_family == 'Debian'
     - name: Install docker
       ansible.builtin.import_role:
         name: geerlingguy.docker
@@ -18,5 +21,5 @@
       vars:
         rhd_server_cert_path: /etc/docker
         rhd_client_cert_path: /vagrant/docker-client-certs
-        rhd_host: "127.0.0.1"
+        rhd_host: "0.0.0.0"
         rhd_secured_tcp_listener: yes

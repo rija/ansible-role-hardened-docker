@@ -15,7 +15,7 @@ rhd_locality: Default City
 rhd_organization: Default Company
 rhd_host: 127.0.0.1
 rhd_common_name: "{{ rhd_host }}"
-rhd_passphrase: Ch4ng3M3!
+rhd_passphrase: changeme
 rhd_server_cert_path: /etc/docker
 rhd_client_cert_path: ~/.docker
 rhd_days: 365

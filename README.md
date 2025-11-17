@@ -11,7 +11,7 @@ Description: hardened setup for Docker on Linux, client TLS for TCP port access 
 
 | Field                | Value           |
 |--------------------- |-----------------|
-| Readme update        | 10/11/2025 |
+| Readme update        | 16/11/2025 |
 
 
 
@@ -38,7 +38,7 @@ Description: hardened setup for Docker on Linux, client TLS for TCP port access 
 | [rhd_organization](defaults/main.yml#L15)   | str | `Default Company` |    
 | [rhd_host](defaults/main.yml#L16)   | str | `127.0.0.1` |    
 | [rhd_common_name](defaults/main.yml#L17)   | str | `{{ rhd_host }}` |    
-| [rhd_passphrase](defaults/main.yml#L18)   | str | `Ch4ng3M3!` |    
+| [rhd_passphrase](defaults/main.yml#L18)   | str | `changeme` |    
 | [rhd_server_cert_path](defaults/main.yml#L19)   | str | `/etc/docker` |    
 | [rhd_client_cert_path](defaults/main.yml#L20)   | str | `~/.docker` |    
 | [rhd_days](defaults/main.yml#L21)   | int | `365` |    
@@ -72,6 +72,14 @@ Description: hardened setup for Docker on Linux, client TLS for TCP port access 
 
 ### Tasks
 
+
+#### File: tasks/cleanup.yml
+
+| Name | Module | Has Conditions |
+| ---- | ------ | -------------- |
+| Delete intermediary files | ansible.builtin.file | False |
+| Get stats of the passphrase file | ansible.builtin.stat | False |
+| Delete passphrase file | ansible.builtin.file | True |
 
 #### File: tasks/generate_ca_cert.yml
 
@@ -120,13 +128,13 @@ Description: hardened setup for Docker on Linux, client TLS for TCP port access 
 | ---- | ------ | -------------- |
 | Check that docker is installed | ansible.builtin.command | False |
 | Check that docker has active systemd service | ansible.builtin.systemd_service | False |
-| Create a temp directory | ansible.builtin.file | False |
-| Add passphrase to the file | ansible.builtin.lineinfile | False |
+| Unnamed | ansible.builtin.include_tasks | False |
 | Unnamed | ansible.builtin.include_tasks | False |
 | Unnamed | ansible.builtin.include_tasks | False |
 | Unnamed | ansible.builtin.include_tasks | False |
 | Unnamed | ansible.builtin.include_tasks | False |
 | Unnamed | ansible.builtin.include_tasks | True |
+| Unnamed | ansible.builtin.include_tasks | False |
 | Unnamed | ansible.builtin.include_tasks | False |
 
 #### File: tasks/organise_cert_files.yml
@@ -148,6 +156,13 @@ Description: hardened setup for Docker on Linux, client TLS for TCP port access 
 | Collect output the dates for serve cert | ansible.builtin.command | False |
 | Show output of dates for serve cert | ansible.builtin.debug | False |
 
+#### File: tasks/prepare.yml
+
+| Name | Module | Has Conditions |
+| ---- | ------ | -------------- |
+| Create a temp directory | ansible.builtin.file | False |
+| Create file with passphrase | ansible.builtin.copy | False |
+
 #### File: tasks/setup_daemon_authenticated_tcp_listener.yml
 
 | Name | Module | Has Conditions |
@@ -167,6 +182,9 @@ Description: hardened setup for Docker on Linux, client TLS for TCP port access 
   hosts: all
   gather_facts: true # Disable if your role does not rely on facts
   tasks:
+    - name: Update apt cache.
+      apt: update_cache=yes cache_valid_time=600
+      when: ansible_facts.os_family == 'Debian'
     - name: Install docker
       ansible.builtin.import_role:
         name: geerlingguy.docker
@@ -182,7 +200,7 @@ Description: hardened setup for Docker on Linux, client TLS for TCP port access 
       vars:
         rhd_server_cert_path: /etc/docker
         rhd_client_cert_path: /vagrant/docker-client-certs
-        rhd_host: "127.0.0.1"
+        rhd_host: "0.0.0.0"
         rhd_secured_tcp_listener: yes
 
 ```
