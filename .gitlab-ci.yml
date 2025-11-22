@@ -34,7 +34,7 @@ include:
 
 linting:
   stage: test
-  image: python:3.13
+  image: python:3.14
   before_script:
     - pip install yamllint
     - pip install ansible-lint
