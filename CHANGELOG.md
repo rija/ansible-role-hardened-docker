@@ -2,6 +2,7 @@
 
 ### Added
 
+- Fix: #5: Use openssl-req instead of openssl-x509 to create CA cert to support RedHat
 - Fix: #9: Test the TLS based TCP connection to Docker
 - Feat: #8: The role will delete redundant intermediary files
 - Feat: #4: Add user documentation
