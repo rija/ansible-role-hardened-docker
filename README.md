@@ -11,7 +11,7 @@ Description: hardened setup for Docker on Linux, client TLS for TCP port access 
 
 | Field                | Value           |
 |--------------------- |-----------------|
-| Readme update        | 16/11/2025 |
+| Readme update        | 24/11/2025 |
 
 
 
@@ -220,6 +220,7 @@ MIT
 #### Platforms
 
 - **Ubuntu**: ['noble']
+- **Rocky**: ['all']
 
 
 #### Dependencies

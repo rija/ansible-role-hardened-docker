@@ -13,6 +13,9 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - noble
+    - name: Rocky
+      versions:
+        - all
   galaxy_tags:
     - web
     - system
