@@ -12,7 +12,7 @@
   when: not cakey.stat.exists and not cacert.stat.exists
   block:
     - name: Generate CA keys
-      ansible.builtin.command: "openssl genrsa -passout file:{{ rhd_passfile }} -out {{ rhd_ca_key }} 4096"
+      ansible.builtin.command: "openssl genrsa -aes256 -passout file:{{ rhd_passfile }} -out {{ rhd_ca_key }} 4096"
       args:
         creates: "{{ rhd_ca_key }}"
 
