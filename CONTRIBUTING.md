@@ -19,8 +19,9 @@
 git config commit.template .commit-template
 ```
 
-* if it took multiples trial-and-error kind of commits to implement a given unit of change, it's better to combine them together into one commit by squashing [4] them before making a pull request.
+* if it took multiples trial-and-error kind of commits to implement a given unit of change, it's better to combine them together into one commit by squashing[4] them before making a pull request.
 * Try to reference the issue number you are making changes to in your commit message, especially for the main commit that implements the issue, and the last commit before you are ready to make a pull request (see `.commit-template` on how to format that information, which is from Conventional Commits[3]).
+* Whenever it makes sense, make use of "git trailers"[5].
 
 ## Testing your changes
 
@@ -33,20 +34,23 @@ If the change is a code change, make sure you are testing thoroughly:
 ## Getting started
 
 Ensure the tool dependencies are installed with Homebrew
-
 ```
 brew bundle
 ```
 
+Then install python dependencies:
+```
+pip install -r requirements.txt
+```
 Then install the Ansible dependencies
-
 ```
 ansible-galaxy install -r requirements.yml
 ```
+Finally, ensure  `.git/hooks/pre-commit` exists and has the same content as in the `.pre-commit` file
 
 ## Testing
 
-This role uses `molecule` for integration Testing
+This role uses `molecule` for integration Testing. Run them as below:
 ```
 molecule test
 ```
@@ -59,5 +63,7 @@ molecule test
 [3] https://www.conventionalcommits.org/en/v1.0.0/
 
 [4] https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History
+
+[5] https://git-scm.com/docs/git-interpret-trailers 
 
 
