@@ -20,7 +20,8 @@
       ansible.builtin.command:
         argv:
           - openssl
-          - x509
+          - req
+          - -x509
           - -new
           - -days
           - "{{ rhd_ca_days }}"

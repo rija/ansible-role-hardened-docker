@@ -45,6 +45,10 @@ linting:
 integration:
   stage: test
   image: docker:latest
+  parallel:
+    matrix:
+      - MDISTRO: ubuntu2404
+      - MDISTRO: rockylinux9
   services:
     - docker:dind
   before_script:
@@ -54,5 +58,4 @@ integration:
     - pip install -r requirements.txt
     - ansible-galaxy install --force -r requirements.yml
   script:
-    - docker info
-    - molecule test
+    - MOLECULE_DISTRO=$MDISTRO molecule test
