@@ -2,6 +2,7 @@
 
 ### Added
 
+- Feat #13: Add git hook to enforce use of conventional commits and update dev docs
 - Docs #15: Add a CODE_OF_CONDUCT.md document from contributor covenant template 
 - Fix #5: Use openssl-req instead of openssl-x509 to create CA cert to support RedHat
 - Fix #9: Test the TLS based TCP connection to Docker

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -e
+
+VENV_PATH="../rhd_venv/bin/activate"
+if [ ! -f "$VENV_PATH" ]; then
+  echo "Error: Python virtual environment not found at $VENV_PATH"
+  echo "Please run from the git repo's root: python3 -m venv ../rhd_venv && source ../rhd_venv/bin/activate && pip install -r requirements.txt"
+  exit 1
+fi
+source "$VENV_PATH"
+conventional-pre-commit --verbose feat fix chore ci test docs refactor style perf "$1"

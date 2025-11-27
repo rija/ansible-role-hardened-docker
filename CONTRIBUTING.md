@@ -37,20 +37,37 @@ Ensure the tool dependencies are installed with Homebrew
 ```
 brew bundle
 ```
+You also need to create a python virtual env alongside the cloned repo:
+```
+python3 -m venv ../rhd_venv
+source ../rhd_venv/bin/activate
+```
 
-Then install python dependencies:
+Then, install python dependencies:
 ```
 pip install -r requirements.txt
 ```
-Then install the Ansible dependencies
+Next, install the Ansible dependencies
 ```
 ansible-galaxy install -r requirements.yml
 ```
-Finally, ensure  `.git/hooks/pre-commit` exists and has the same content as in the `.pre-commit` file
+
+## Setting up the git hooks
+
+Given that this project is YAML heavy, you should make sure you run `yamllint` and `ansible-lint` before committing any changes. That's what git hooks enables.
+
+Additionally, in this project we use conventional commits as mentioned above.
+
+So that nobody has to think about that every time, run the commands below to enable automated checks before a commit is made:
+```
+cd .git/hooks/
+ln -s ../../.pre-commit pre-commit
+ln -s ../../.commit-msg commit-msg
+```
 
 ## Testing
 
-This role uses `molecule` for integration Testing. Run them as below:
+This role uses `molecule` for integration testing. Run them as below:
 ```
 molecule test
 ```
